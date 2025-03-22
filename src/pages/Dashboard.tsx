@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '@/components/layout/Sidebar';
@@ -10,6 +9,7 @@ import AIQueryBox from '@/components/ai/AIQueryBox';
 import PersonnelCard from '@/components/personnel/PersonnelCard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from '@/components/ui/button';
+import { SidebarProvider, SidebarInset, SidebarTrigger } from '@/components/ui/sidebar';
 import { 
   Plus, 
   ClipboardList, 
@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
-// Sample mock data
 const mockThesisGroups = [
   {
     id: '1',
@@ -103,8 +102,6 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // In a real app, this would come from authentication state
-    // For demo, we'll provide a way to switch roles
     const timer = setTimeout(() => {
       toast({
         title: "Welcome to the Research Dashboard",
@@ -125,296 +122,173 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
-      <Sidebar userRole={userRole} />
-      
-      <div className="pl-0 md:pl-64 transition-all duration-300">
-        <main className="container py-6 px-4 md:px-6 lg:px-8 max-w-6xl mx-auto">
-          {/* Role switcher (for demo only) */}
-          <div className="mb-6 flex justify-end">
-            <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
-              <button
-                onClick={() => switchRole('research_head')}
-                className={`px-3 py-1.5 text-xs font-medium rounded ${
-                  userRole === 'research_head' 
-                    ? 'bg-white dark:bg-gray-800 shadow-sm' 
-                    : 'text-gray-600 dark:text-gray-400'
-                }`}
-              >
-                Research Head
-              </button>
-              <button
-                onClick={() => switchRole('professor')}
-                className={`px-3 py-1.5 text-xs font-medium rounded ${
-                  userRole === 'professor' 
-                    ? 'bg-white dark:bg-gray-800 shadow-sm' 
-                    : 'text-gray-600 dark:text-gray-400'
-                }`}
-              >
-                Professor
-              </button>
-              <button
-                onClick={() => switchRole('student')}
-                className={`px-3 py-1.5 text-xs font-medium rounded ${
-                  userRole === 'student' 
-                    ? 'bg-white dark:bg-gray-800 shadow-sm' 
-                    : 'text-gray-600 dark:text-gray-400'
-                }`}
-              >
-                Student
-              </button>
-            </div>
-          </div>
-          
-          <TransitionLayout>
-            <div className="space-y-6">
-              {/* Welcome Section */}
-              <WelcomeCard 
-                userName={userRole === 'research_head' ? 'Dr. Martinez' : 
-                          userRole === 'professor' ? 'Dr. Williams' : 'Alex Johnson'}
-                role={userRole}
-              />
-              
-              {/* Stats Cards */}
-              {userRole !== 'student' && (
-                <StatsCard data={DefaultStatData} />
-              )}
-              
-              {/* Main Dashboard Content */}
-              <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="mb-4">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="thesis">
-                    {userRole === 'student' ? 'My Thesis' : 'Thesis Groups'}
-                  </TabsTrigger>
-                  {userRole === 'research_head' && (
-                    <TabsTrigger value="personnel">Personnel</TabsTrigger>
+      <SidebarProvider defaultOpen={true}>
+        <div className="flex min-h-screen w-full">
+          <Sidebar userRole={userRole} />
+          <SidebarInset className="transition-all duration-300">
+            <header className="flex items-center justify-between p-4 border-b">
+              <SidebarTrigger />
+              <div className="flex items-center justify-end flex-1">
+                <div className="flex items-center bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
+                  <button
+                    onClick={() => switchRole('research_head')}
+                    className={`px-3 py-1.5 text-xs font-medium rounded ${
+                      userRole === 'research_head' 
+                        ? 'bg-white dark:bg-gray-800 shadow-sm' 
+                        : 'text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    Research Head
+                  </button>
+                  <button
+                    onClick={() => switchRole('professor')}
+                    className={`px-3 py-1.5 text-xs font-medium rounded ${
+                      userRole === 'professor' 
+                        ? 'bg-white dark:bg-gray-800 shadow-sm' 
+                        : 'text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    Professor
+                  </button>
+                  <button
+                    onClick={() => switchRole('student')}
+                    className={`px-3 py-1.5 text-xs font-medium rounded ${
+                      userRole === 'student' 
+                        ? 'bg-white dark:bg-gray-800 shadow-sm' 
+                        : 'text-gray-600 dark:text-gray-400'
+                    }`}
+                  >
+                    Student
+                  </button>
+                </div>
+              </div>
+            </header>
+            
+            <main className="p-6">
+              <TransitionLayout>
+                <div className="space-y-6 max-w-6xl mx-auto">
+                  <WelcomeCard 
+                    userName={userRole === 'research_head' ? 'Dr. Martinez' : 
+                              userRole === 'professor' ? 'Dr. Williams' : 'Alex Johnson'}
+                    role={userRole}
+                  />
+                  
+                  {userRole !== 'student' && (
+                    <StatsCard data={DefaultStatData} />
                   )}
-                  <TabsTrigger value="announcements">Announcements</TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="overview" className="space-y-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div className="lg:col-span-2 space-y-6">
-                      {/* Recent Thesis Groups */}
-                      <div>
-                        <div className="flex items-center justify-between mb-4">
-                          <h2 className="text-xl font-semibold">Recent Thesis Groups</h2>
-                          {userRole !== 'student' && (
-                            <Button size="sm" variant="outline" onClick={() => toast({ title: "Create New" })}>
-                              <Plus size={16} className="mr-1" />
-                              New Group
-                            </Button>
-                          )}
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          {mockThesisGroups.slice(0, 2).map((group) => (
-                            <ThesisGroup
-                              key={group.id}
-                              {...group}
-                              onView={(id) => toast({ title: `Viewing ${id}` })}
-                              onEdit={userRole !== 'student' ? (id) => toast({ title: `Editing ${id}` }) : undefined}
-                              onDelete={userRole === 'research_head' ? (id) => toast({ title: `Deleting ${id}` }) : undefined}
-                            />
-                          ))}
-                        </div>
-                        
-                        <Button 
-                          variant="link" 
-                          className="mt-4"
-                          onClick={() => toast({ title: "View All Thesis Groups" })}
-                        >
-                          View all thesis groups
-                          <ChevronRight size={16} className="ml-1" />
-                        </Button>
-                      </div>
-                      
-                      {/* Quick Links Section */}
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        {[
-                          { 
-                            title: "Manage Thesis", 
-                            icon: <ClipboardList size={24} />, 
-                            bg: "bg-blue-50 dark:bg-blue-950",
-                            visible: userRole !== 'student',
-                          },
-                          { 
-                            title: "Personnel", 
-                            icon: <Users size={24} />, 
-                            bg: "bg-purple-50 dark:bg-purple-950",
-                            visible: userRole === 'research_head',
-                          },
-                          { 
-                            title: "Messages", 
-                            icon: <MessageSquare size={24} />, 
-                            bg: "bg-green-50 dark:bg-green-950",
-                            visible: true,
-                          },
-                          { 
-                            title: "Settings", 
-                            icon: <Settings size={24} />, 
-                            bg: "bg-amber-50 dark:bg-amber-950",
-                            visible: true,
-                          },
-                        ].filter(item => item.visible).map((item, index) => (
-                          <Button
-                            key={index}
-                            variant="ghost"
-                            className={`h-24 flex flex-col items-center justify-center gap-2 ${item.bg} hover:bg-opacity-80 transition-all`}
-                            onClick={() => toast({ title: `${item.title} clicked` })}
-                          >
-                            {item.icon}
-                            <span className="text-xs font-medium">{item.title}</span>
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
+                  
+                  <Tabs defaultValue="overview" className="w-full">
+                    <TabsList className="mb-4">
+                      <TabsTrigger value="overview">Overview</TabsTrigger>
+                      <TabsTrigger value="thesis">
+                        {userRole === 'student' ? 'My Thesis' : 'Thesis Groups'}
+                      </TabsTrigger>
+                      {userRole === 'research_head' && (
+                        <TabsTrigger value="personnel">Personnel</TabsTrigger>
+                      )}
+                      <TabsTrigger value="announcements">Announcements</TabsTrigger>
+                    </TabsList>
                     
-                    {/* AI Assistant Section */}
-                    <div className="space-y-6">
-                      <AIQueryBox 
-                        promptType={userRole === 'research_head' ? 'admin' : 'thesis'}
-                        placeholder={
-                          userRole === 'research_head' 
-                            ? "Ask about department statistics..." 
-                            : "Ask for thesis advice or topic validation..."
-                        }
-                      />
-                      
-                      {/* Recent Announcements */}
-                      <div>
-                        <h2 className="text-xl font-semibold mb-4">Announcements</h2>
-                        <div className="space-y-3">
-                          {mockAnnouncements.map((announcement) => (
-                            <div 
-                              key={announcement.id}
-                              className="p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-colors cursor-pointer"
-                              onClick={() => toast({ title: announcement.title })}
+                    <TabsContent value="overview" className="space-y-6">
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-2 space-y-6">
+                          <div>
+                            <div className="flex items-center justify-between mb-4">
+                              <h2 className="text-xl font-semibold">Recent Thesis Groups</h2>
+                              {userRole !== 'student' && (
+                                <Button size="sm" variant="outline" onClick={() => toast({ title: "Create New" })}>
+                                  <Plus size={16} className="mr-1" />
+                                  New Group
+                                </Button>
+                              )}
+                            </div>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {mockThesisGroups.slice(0, 2).map((group) => (
+                                <ThesisGroup
+                                  key={group.id}
+                                  {...group}
+                                  onView={(id) => toast({ title: `Viewing ${id}` })}
+                                  onEdit={userRole !== 'student' ? (id) => toast({ title: `Editing ${id}` }) : undefined}
+                                  onDelete={userRole === 'research_head' ? (id) => toast({ title: `Deleting ${id}` }) : undefined}
+                                />
+                              ))}
+                            </div>
+                            
+                            <Button 
+                              variant="link" 
+                              className="mt-4"
+                              onClick={() => toast({ title: "View All Thesis Groups" })}
                             >
-                              <div className="flex items-start gap-3">
-                                <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                                  <BellRing size={16} className="text-blue-600 dark:text-blue-400" />
-                                </div>
-                                <div>
-                                  <h3 className="font-medium text-sm">{announcement.title}</h3>
-                                  <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                                    {announcement.content}
-                                  </p>
-                                  <div className="flex items-center justify-between mt-2">
-                                    <p className="text-xs text-gray-500">
-                                      By {announcement.author}
-                                    </p>
-                                    <p className="text-xs text-gray-500">
-                                      {new Date(announcement.date).toLocaleDateString()}
-                                    </p>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-                
-                <TabsContent value="thesis" className="space-y-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold">
-                      {userRole === 'student' ? 'My Thesis' : 'All Thesis Groups'}
-                    </h2>
-                    {userRole !== 'student' && (
-                      <Button onClick={() => toast({ title: "Create New Thesis Group" })}>
-                        <Plus size={16} className="mr-1" />
-                        New Group
-                      </Button>
-                    )}
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {mockThesisGroups.map((group) => (
-                      <ThesisGroup
-                        key={group.id}
-                        {...group}
-                        onView={(id) => toast({ title: `Viewing ${id}` })}
-                        onEdit={userRole !== 'student' ? (id) => toast({ title: `Editing ${id}` }) : undefined}
-                        onDelete={userRole === 'research_head' ? (id) => toast({ title: `Deleting ${id}` }) : undefined}
-                      />
-                    ))}
-                  </div>
-                </TabsContent>
-                
-                {userRole === 'research_head' && (
-                  <TabsContent value="personnel" className="space-y-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <h2 className="text-xl font-semibold">Personnel Management</h2>
-                      <Button onClick={() => toast({ title: "Add Personnel" })}>
-                        <Plus size={16} className="mr-1" />
-                        Add Personnel
-                      </Button>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {mockPersonnel.map((person) => (
-                        <PersonnelCard
-                          key={person.id}
-                          {...person}
-                          onEdit={(id) => toast({ title: `Editing ${id}` })}
-                          onDelete={(id) => toast({ title: `Deleting ${id}` })}
-                          onAssign={(id) => toast({ title: `Assigning ${id}` })}
-                        />
-                      ))}
-                    </div>
-                  </TabsContent>
-                )}
-                
-                <TabsContent value="announcements" className="space-y-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-xl font-semibold">Announcements</h2>
-                    {userRole !== 'student' && (
-                      <Button onClick={() => toast({ title: "Create Announcement" })}>
-                        <Plus size={16} className="mr-1" />
-                        Create Announcement
-                      </Button>
-                    )}
-                  </div>
-                  
-                  <div className="space-y-4">
-                    {mockAnnouncements.map((announcement) => (
-                      <div 
-                        key={announcement.id}
-                        className="p-6 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-colors"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                            <BellRing size={20} className="text-blue-600 dark:text-blue-400" />
+                              View all thesis groups
+                              <ChevronRight size={16} className="ml-1" />
+                            </Button>
                           </div>
-                          <div className="flex-1">
-                            <h3 className="font-medium">{announcement.title}</h3>
-                            <p className="text-muted-foreground mt-2">
-                              {announcement.content}
-                            </p>
-                            <div className="flex items-center justify-between mt-4">
-                              <p className="text-sm text-gray-500">
-                                By {announcement.author}
-                              </p>
-                              <p className="text-sm text-gray-500">
-                                {new Date(announcement.date).toLocaleDateString()}
-                              </p>
-                            </div>
+                          
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            {[
+                              { 
+                                title: "Manage Thesis", 
+                                icon: <ClipboardList size={24} />, 
+                                bg: "bg-blue-50 dark:bg-blue-950",
+                                visible: userRole !== 'student',
+                              },
+                              { 
+                                title: "Personnel", 
+                                icon: <Users size={24} />, 
+                                bg: "bg-purple-50 dark:bg-purple-950",
+                                visible: userRole === 'research_head',
+                              },
+                              { 
+                                title: "Messages", 
+                                icon: <MessageSquare size={24} />, 
+                                bg: "bg-green-50 dark:bg-green-950",
+                                visible: true,
+                              },
+                              { 
+                                title: "Settings", 
+                                icon: <Settings size={24} />, 
+                                bg: "bg-amber-50 dark:bg-amber-950",
+                                visible: true,
+                              },
+                            ].filter(item => item.visible).map((item, index) => (
+                              <Button
+                                key={index}
+                                variant="ghost"
+                                className={`h-24 flex flex-col items-center justify-center gap-2 ${item.bg} hover:bg-opacity-80 transition-all`}
+                                onClick={() => toast({ title: `${item.title} clicked` })}
+                              >
+                                {item.icon}
+                                <span className="text-xs font-medium">{item.title}</span>
+                              </Button>
+                            ))}
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-              </Tabs>
-            </div>
-          </TransitionLayout>
-        </main>
-      </div>
-    </div>
-  );
-};
+                        
+                        <div className="space-y-6">
+                          <AIQueryBox 
+                            promptType={userRole === 'research_head' ? 'admin' : 'thesis'}
+                            placeholder={
+                              userRole === 'research_head' 
+                                ? "Ask about department statistics..." 
+                                : "Ask for thesis advice or topic validation..."
+                            }
+                          />
+                          
+                          <div>
+                            <h2 className="text-xl font-semibold mb-4">Announcements</h2>
+                            <div className="space-y-3">
+                              {mockAnnouncements.map((announcement) => (
+                                <div 
+                                  key={announcement.id}
+                                  className="p-4 rounded-lg border border-gray-200 dark:border-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-colors cursor-pointer"
+                                  onClick={() => toast({ title: announcement.title })}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
+                                      <BellRing size={16} className="text-blue-600 dark:text-blue-400" />
+                                    </div>
+                                    <div>
+                                      <h3 className="font-medium text-sm">{announcement.title}</h3>
+                                     
 
-export default Dashboard;
