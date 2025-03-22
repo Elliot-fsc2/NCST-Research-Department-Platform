@@ -1,270 +1,111 @@
 
-import React, { useState } from 'react';
-import { Filter, Plus, Search, UserPlus } from 'lucide-react';
-import Navbar from '@/components/layout/Navbar';
-import Sidebar from '@/components/layout/Sidebar';
+import React from 'react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
 import TransitionLayout from '@/components/shared/TransitionLayout';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import PersonnelCard from '@/components/personnel/PersonnelCard';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { Plus } from 'lucide-react';
 
-// Define the role mapping type
-type RoleMapping = {
-  [key: string]: "technical_adviser" | "statistician" | "language_critic" | "professor";
-};
-
-// Role mapping from display strings to component prop values
-const roleMapping: RoleMapping = {
-  "Technical Adviser": "technical_adviser",
-  "Statistician": "statistician",
-  "Language Critic": "language_critic",
-  "Professor": "professor"
-};
-
-// Mock personnel data
 const mockPersonnel = [
   {
-    id: 1,
-    name: "Dr. Sarah Wilson",
-    role: "Technical Adviser",
-    department: "Computer Science",
-    email: "sarah.wilson@university.edu.ph",
-    phone: "(123) 456-7890",
-    status: "Active",
-    assignedTheses: 3,
-    avatar: null,
+    id: '1',
+    name: 'Dr. James Wilson',
+    role: 'technical_adviser',
+    email: 'jwilson@university.edu.ph',
+    phone: '123-456-7890',
+    department: 'Computer Science',
+    assignedGroups: 5,
   },
   {
-    id: 2,
-    name: "Prof. Robert Chen",
-    role: "Technical Adviser",
-    department: "Civil Engineering",
-    email: "robert.chen@university.edu.ph",
-    phone: "(123) 456-7891",
-    status: "Active",
-    assignedTheses: 2,
-    avatar: null,
+    id: '2',
+    name: 'Dr. Emily Chen',
+    role: 'statistician',
+    email: 'echen@university.edu.ph',
+    phone: '123-456-7891',
+    department: 'Mathematics',
+    assignedGroups: 3,
   },
   {
-    id: 3,
-    name: "Dr. Jennifer Adams",
-    role: "Language Critic",
-    department: "English",
-    email: "jennifer.adams@university.edu.ph",
-    phone: "(123) 456-7892",
-    status: "Active",
-    assignedTheses: 1,
-    avatar: null,
+    id: '3',
+    name: 'Dr. Robert Brown',
+    role: 'language_critic',
+    email: 'rbrown@university.edu.ph',
+    phone: '123-456-7892',
+    department: 'English',
+    assignedGroups: 4,
   },
   {
-    id: 4,
-    name: "Dr. Thomas Johnson",
-    role: "Technical Adviser",
-    department: "Information Technology",
-    email: "thomas.johnson@university.edu.ph",
-    phone: "(123) 456-7893",
-    status: "Inactive",
-    assignedTheses: 0,
-    avatar: null,
+    id: '4',
+    name: 'Dr. Sarah Johnson',
+    role: 'professor',
+    email: 'sjohnson@university.edu.ph',
+    phone: '123-456-7893',
+    department: 'Computer Engineering',
+    assignedGroups: 2,
   },
   {
-    id: 5,
-    name: "Prof. David Miller",
-    role: "Technical Adviser",
-    department: "Electrical Engineering",
-    email: "david.miller@university.edu.ph",
-    phone: "(123) 456-7894",
-    status: "Active",
-    assignedTheses: 1,
-    avatar: null,
+    id: '5',
+    name: 'Dr. Michael Davis',
+    role: 'technical_adviser',
+    email: 'mdavis@university.edu.ph',
+    phone: '123-456-7894',
+    department: 'Information Technology',
+    assignedGroups: 3,
   },
   {
-    id: 6,
-    name: "Dr. Elizabeth Scott",
-    role: "Statistician",
-    department: "Mathematics",
-    email: "elizabeth.scott@university.edu.ph",
-    phone: "(123) 456-7895",
-    status: "Active",
-    assignedTheses: 1,
-    avatar: null,
-  },
-  {
-    id: 7,
-    name: "Dr. Patricia Adams",
-    role: "Technical Adviser",
-    department: "Computer Science",
-    email: "patricia.adams@university.edu.ph",
-    phone: "(123) 456-7896",
-    status: "Active",
-    assignedTheses: 1,
-    avatar: null,
-  },
-  {
-    id: 8,
-    name: "Prof. Richard Hill",
-    role: "Statistician",
-    department: "Mathematics",
-    email: "richard.hill@university.edu.ph",
-    phone: "(123) 456-7897",
-    status: "Inactive",
-    assignedTheses: 0,
-    avatar: null,
+    id: '6',
+    name: 'Dr. Jennifer White',
+    role: 'language_critic',
+    email: 'jwhite@university.edu.ph',
+    phone: '123-456-7895',
+    department: 'Communication',
+    assignedGroups: 2,
   },
 ];
 
-const Personnel = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-  const [roleFilter, setRoleFilter] = useState<string | null>(null);
-  const [departmentFilter, setDepartmentFilter] = useState<string | null>(null);
-  
-  // Get unique roles for filter
-  const roles = Array.from(new Set(mockPersonnel.map(person => person.role)));
-  
-  // Get unique departments for filter
-  const departments = Array.from(new Set(mockPersonnel.map(person => person.department)));
-  
-  // Filter personnel based on search query, tab, role, and department filters
-  const filteredPersonnel = mockPersonnel.filter(person => {
-    const matchesSearch = person.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         person.email.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesTab = activeTab === 'all' || 
-                     (activeTab === 'active' && person.status === 'Active') ||
-                     (activeTab === 'inactive' && person.status === 'Inactive');
-    
-    const matchesRole = !roleFilter || person.role === roleFilter;
-    const matchesDepartment = !departmentFilter || person.department === departmentFilter;
-    
-    return matchesSearch && matchesTab && matchesRole && matchesDepartment;
-  });
+// Map string roles to the expected PersonnelCard role type
+const roleMapping = {
+  'professor': 'professor' as const,
+  'technical_adviser': 'technical_adviser' as const,
+  'statistician': 'statistician' as const,
+  'language_critic': 'language_critic' as const,
+};
+
+const Personnel: React.FC = () => {
+  const { toast } = useToast();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <div className="flex flex-1">
-        <Sidebar userRole="research_head" />
-        <main className="flex-1 p-4 pt-20 md:ml-[70px] lg:ml-64">
-          <TransitionLayout>
-            <div className="container mx-auto max-w-6xl">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <h1 className="text-3xl font-bold">Personnel Management</h1>
-                <Button className="flex items-center gap-2">
-                  <UserPlus size={16} />
-                  Add Personnel
-                </Button>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
-                <div className="lg:col-span-5 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-                  <Input 
-                    placeholder="Search by name or email..." 
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                
-                <div className="lg:col-span-3">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Filter className="mr-2" size={16} />
-                        Role
-                        {roleFilter && <Badge variant="secondary" className="ml-2">{roleFilter}</Badge>}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuLabel>Filter by Role</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setRoleFilter(null)}>
-                        All Roles
-                      </DropdownMenuItem>
-                      {roles.map(role => (
-                        <DropdownMenuItem key={role} onClick={() => setRoleFilter(role)}>
-                          {role}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-                
-                <div className="lg:col-span-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start">
-                        <Filter className="mr-2" size={16} />
-                        Department
-                        {departmentFilter && <Badge variant="secondary" className="ml-2">{departmentFilter}</Badge>}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuLabel>Filter by Department</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => setDepartmentFilter(null)}>
-                        All Departments
-                      </DropdownMenuItem>
-                      {departments.map(dept => (
-                        <DropdownMenuItem key={dept} onClick={() => setDepartmentFilter(dept)}>
-                          {dept}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
-              
-              <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="mb-6">
-                <TabsList>
-                  <TabsTrigger value="all">All Personnel</TabsTrigger>
-                  <TabsTrigger value="active">Active</TabsTrigger>
-                  <TabsTrigger value="inactive">Inactive</TabsTrigger>
-                </TabsList>
-              </Tabs>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredPersonnel.length > 0 ? (
-                  filteredPersonnel.map(person => (
-                    <PersonnelCard
-                      key={person.id}
-                      id={person.id.toString()}
-                      name={person.name}
-                      role={roleMapping[person.role]}
-                      department={person.department}
-                      email={person.email}
-                      phone={person.phone}
-                      assignedGroups={person.assignedTheses}
-                    />
-                  ))
-                ) : (
-                  <div className="col-span-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg p-8 text-center">
-                    <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Search size={24} className="text-gray-500" />
-                    </div>
-                    <h3 className="text-lg font-medium mb-2">No personnel found</h3>
-                    <p className="text-gray-500 max-w-md mx-auto">
-                      No personnel match your current search criteria. Try adjusting your filters or search query.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </TransitionLayout>
-        </main>
-      </div>
-    </div>
+    <DashboardLayout userRole="research_head">
+      <TransitionLayout>
+        <div className="space-y-6 max-w-6xl mx-auto">
+          <header className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold tracking-tight">Personnel</h1>
+            <Button onClick={() => toast({ title: "Add New Personnel" })}>
+              <Plus size={16} className="mr-1" />
+              Add Personnel
+            </Button>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {mockPersonnel.map((person) => (
+              <PersonnelCard
+                key={person.id}
+                id={person.id}
+                name={person.name}
+                role={roleMapping[person.role as keyof typeof roleMapping]}
+                email={person.email}
+                phone={person.phone}
+                department={person.department}
+                assignedGroups={person.assignedGroups}
+                onEdit={() => toast({ title: `Editing ${person.name}` })}
+                onDelete={() => toast({ title: `Deleting ${person.name}` })}
+              />
+            ))}
+          </div>
+        </div>
+      </TransitionLayout>
+    </DashboardLayout>
   );
 };
 
