@@ -1,10 +1,37 @@
-# Welcome to your Lovable project
 
-## Project info
+# Research Department Management System
+
+## Overview
+
+This is a comprehensive web application designed to facilitate research management in academic institutions. The system connects research heads, professors, and students in a unified platform that streamlines thesis management, personnel assignment, and academic communication.
+
+## Key Features
+
+- **Role-Based Access Control**: Different interfaces and capabilities for research heads, professors, and students
+- **Thesis Management**: Create, track, and approve thesis projects
+- **AI-Powered Thesis Advice**: Students can get AI guidance on thesis topics and research approaches
+- **Communication Tools**: Built-in messaging system between all stakeholders
+- **Dashboard Analytics**: Visual statistics on thesis progress, student counts, and department performance
+
+## Technology Stack
+
+This project is built with:
+
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
+- React Router
+- Tanstack Query
+
+## Project URL
 
 **URL**: https://lovable.dev/projects/a28a820f-e5e1-4bc8-806f-ecb1b8c3198f
 
-## How can I edit this code?
+## Development
+
+### How to edit this code
 
 There are several ways of editing your application.
 
@@ -50,20 +77,10 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
+## Deployment
 
 Simply open [Lovable](https://lovable.dev/projects/a28a820f-e5e1-4bc8-806f-ecb1b8c3198f) and click on Share -> Publish.
 
-## I want to use a custom domain - is that possible?
+## Custom Domains
 
 We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
