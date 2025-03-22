@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { Bell, Eye, Lock, Mail, Moon, Shield, Sun, User, Users } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, EyeOff, Lock, Mail, Moon, Shield, Sun, User, Users } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/Sidebar';
 import TransitionLayout from '@/components/shared/TransitionLayout';
@@ -10,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Check, ChevronRight, CreditCard, Edit, Github, Globe, Key, LifeBuoy, LogOut, MessageSquare, PanelLeft, Plus, Settings as SettingsIcon, Smartphone } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 const Settings = () => {
   return (
@@ -190,7 +191,7 @@ const Settings = () => {
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
-                        <Eye size={18} />
+                        <EyeOff size={18} />
                         Appearance
                       </CardTitle>
                       <CardDescription>

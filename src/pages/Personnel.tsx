@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Filter, Plus, Search, UserPlus } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
@@ -16,7 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { PersonnelCard } from '@/components/personnel/PersonnelCard';
+import PersonnelCard from '@/components/personnel/PersonnelCard';
 
 // Mock personnel data
 const mockPersonnel = [
