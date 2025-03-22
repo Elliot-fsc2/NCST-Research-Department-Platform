@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Filter, Plus, Search, UserPlus } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
@@ -16,6 +17,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import PersonnelCard from '@/components/personnel/PersonnelCard';
+
+// Define the role mapping type
+type RoleMapping = {
+  [key: string]: "technical_adviser" | "statistician" | "language_critic" | "professor";
+};
+
+// Role mapping from display strings to component prop values
+const roleMapping: RoleMapping = {
+  "Technical Adviser": "technical_adviser",
+  "Statistician": "statistician",
+  "Language Critic": "language_critic",
+  "Professor": "professor"
+};
 
 // Mock personnel data
 const mockPersonnel = [
@@ -225,14 +239,13 @@ const Personnel = () => {
                   filteredPersonnel.map(person => (
                     <PersonnelCard
                       key={person.id}
+                      id={person.id.toString()}
                       name={person.name}
-                      role={person.role}
+                      role={roleMapping[person.role]}
                       department={person.department}
                       email={person.email}
                       phone={person.phone}
-                      status={person.status}
-                      assignedTheses={person.assignedTheses}
-                      avatar={person.avatar}
+                      assignedGroups={person.assignedTheses}
                     />
                   ))
                 ) : (
